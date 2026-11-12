@@ -6,35 +6,52 @@ import { NETWORK_PASSPHRASE } from "@/lib/config";
 import { shortAddr } from "@/lib/format";
 import { api, errorMessage } from "./api-client";
 
-type Kit = typeof import("@creit.tech/stellar-wallets-kit/sdk").StellarWalletsKit;
+type Kit = import("./wallet-kit").Kit;
 type Me = { address: string | null; user: { name: string } | null; admin: boolean };
 
 let kitPromise: Promise<Kit> | null = null;
 
-/** Stellar Wallets Kit is browser-only, so load it on first use. Varial (formerly Freighter) is in the default modules. */
+/** Stellar Wallets Kit is browser-only, so load it on first use (see wallet-kit.ts for the wallet list). */
 function getKit(): Promise<Kit> {
-  if (!kitPromise) {
-    kitPromise = (async () => {
-      // Only Stellar wallets. The kit's defaultModules() also loads a MetaMask module that
-      // throws "MetaMask extension not found" when MetaMask isn't installed.
-      const [{ StellarWalletsKit }, { VarialModule }, { xBullModule }, { AlbedoModule }, { LobstrModule }, { HanaModule }, { RabetModule }] =
-        await Promise.all([
-          import("@creit.tech/stellar-wallets-kit/sdk"),
-          import("@creit.tech/stellar-wallets-kit/modules/varial"),
-          import("@creit.tech/stellar-wallets-kit/modules/xbull"),
-          import("@creit.tech/stellar-wallets-kit/modules/albedo"),
-          import("@creit.tech/stellar-wallets-kit/modules/lobstr"),
-          import("@creit.tech/stellar-wallets-kit/modules/hana"),
-          import("@creit.tech/stellar-wallets-kit/modules/rabet"),
-        ]);
-      StellarWalletsKit.init({
-        modules: [new VarialModule(), new xBullModule(), new AlbedoModule(), new LobstrModule(), new HanaModule(), new RabetModule()],
-        network: NETWORK_PASSPHRASE as Parameters<Kit["setNetwork"]>[0],
-      });
-      return StellarWalletsKit;
-    })();
-  }
+  kitPromise ??= loadKit().catch((e: unknown) => {
+    // Don't remember the failure, so the next click tries again instead of failing forever.
+    kitPromise = null;
+    if (!isStaleBundleError(e)) throw e;
+    // The tab is running code from an older build than the server has (it stayed open while
+    // the app was updated or the dev server restarted, or the browser cached old files).
+    // Reloading fetches the current code; the pending promise just waits for the reload.
+    if (reloadOnce()) return new Promise<never>(() => {});
+    throw new Error("Circle was updated while this page was open. Reload the page (Ctrl+Shift+R) and try again.");
+  });
   return kitPromise;
+}
+
+// async, so an error thrown while starting the import() becomes a rejection getKit can handle.
+async function loadKit(): Promise<Kit> {
+  const { createKit } = await import("./wallet-kit");
+  return createKit(NETWORK_PASSPHRASE);
+}
+
+/** Errors the browser bundle throws when it can't find code it expects (an outdated tab or cache). */
+function isStaleBundleError(e: unknown): boolean {
+  if (e instanceof Error && e.name === "ChunkLoadError") return true;
+  return /module factory is not available|failed to load chunk|loading (css )?chunk [\w-]+ failed|failed to fetch dynamically imported module|importing a module script failed|error loading dynamically imported module/i.test(
+    errorMessage(e),
+  );
+}
+
+const RELOAD_KEY = "circle:stale-bundle-reload";
+
+/** Reloads the page, at most once a minute, so a page that keeps failing can't loop. Returns true if it reloaded. */
+function reloadOnce(): boolean {
+  try {
+    if (Date.now() - Number(sessionStorage.getItem(RELOAD_KEY) || 0) < 60_000) return false;
+    sessionStorage.setItem(RELOAD_KEY, String(Date.now()));
+  } catch {
+    return false; // storage blocked: show the message instead of risking a reload loop
+  }
+  window.location.reload();
+  return true;
 }
 
 type WalletCtx = {
