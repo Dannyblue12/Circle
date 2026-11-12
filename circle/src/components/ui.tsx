@@ -150,7 +150,7 @@ export function PageHeader({ back, title, subtitle, action }: { back?: string; t
         <h1 className="text-2xl font-bold tracking-tight sm:text-[28px]">{title}</h1>
         {subtitle && <p className="mt-1 text-[15px] text-muted">{subtitle}</p>}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { isStellarAddress, num } from "@/lib/format";
+import { SplitBar } from "./split-bar";
 import { cx } from "./ui";
 
 export type MilestoneRow = { description: string; memberName: string; receiver: string; amount: string };
@@ -15,6 +16,13 @@ export function rowsTotal(rows: MilestoneRow[]) {
 
 export function rowsToPayload(rows: MilestoneRow[]) {
   return rows.map((r) => ({ ...r, amount: Number(r.amount) }));
+}
+
+/** Splits an amount across rows to the cent; the last row takes any rounding remainder. */
+function splitEvenly(rows: MilestoneRow[], amount: number): MilestoneRow[] {
+  const each = Math.floor((amount / rows.length) * 100) / 100;
+  const last = Math.round((amount - each * (rows.length - 1)) * 100) / 100;
+  return rows.map((r, i) => ({ ...r, amount: String(i === rows.length - 1 ? last : each) }));
 }
 
 /** One milestone = one person's share. Each share is paid straight to that person's wallet. */
@@ -44,6 +52,10 @@ export function MilestoneEditor({
                 <input
                   className="input"
                   placeholder="What gets delivered, e.g. Logo and design lead"
+                  aria-label={`Milestone ${i + 1}: what gets delivered`}
+                  required
+                  minLength={2}
+                  maxLength={80}
                   value={r.description}
                   onChange={(e) => update(i, { description: e.target.value })}
                 />
@@ -52,12 +64,22 @@ export function MilestoneEditor({
                     className="input pr-14 text-right font-semibold"
                     inputMode="decimal"
                     placeholder="0"
+                    aria-label={`Milestone ${i + 1}: amount in USDC`}
+                    required
                     value={r.amount}
                     onChange={(e) => update(i, { amount: e.target.value.replace(/[^0-9.]/g, "") })}
                   />
                   <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted">USDC</span>
                 </div>
-                <input className="input" placeholder="Who does it (name)" value={r.memberName} onChange={(e) => update(i, { memberName: e.target.value })} />
+                <input
+                  className="input"
+                  placeholder="Who does it (name)"
+                  aria-label={`Milestone ${i + 1}: who does it`}
+                  required
+                  maxLength={40}
+                  value={r.memberName}
+                  onChange={(e) => update(i, { memberName: e.target.value })}
+                />
                 <div className="flex gap-2 sm:col-span-1">
                   {rows.length > 1 && (
                     <button type="button" onClick={() => onChange(rows.filter((_, j) => j !== i))} className="w-full rounded-xl border border-line py-2 text-xs font-semibold text-muted hover:border-red-ink/30 hover:text-red-ink">
@@ -68,6 +90,10 @@ export function MilestoneEditor({
                 <input
                   className={cx("input font-mono text-xs sm:col-span-2", badAddr && "border-red-ink/50")}
                   placeholder="Their Stellar wallet  G…"
+                  aria-label={`Milestone ${i + 1}: wallet that gets paid`}
+                  required
+                  pattern="G[A-Z2-7]{55}"
+                  title="A Stellar address: 56 characters, starts with G"
                   value={r.receiver}
                   onChange={(e) => update(i, { receiver: e.target.value.trim() })}
                 />
@@ -86,16 +112,49 @@ export function MilestoneEditor({
           + Add milestone / team member
         </button>
       )}
-      <div className="mt-3 flex items-center justify-between rounded-xl bg-white px-4 py-3 text-sm">
-        <span className="text-muted">Total client pays</span>
-        <span className="font-bold">
-          {num(total)} USDC
-          {budget ? (
-            <span className={cx("ml-2 text-xs font-medium", total > budget ? "text-amber-ink" : "text-muted")}>
-              {total > budget ? `${num(total - budget)} over budget` : `budget ${num(budget)}`}
-            </span>
-          ) : null}
-        </span>
+      <div className="mt-3 rounded-xl bg-white px-4 py-3 text-sm">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted">Total client pays</span>
+          <span className="text-right font-bold">
+            {num(total)} USDC
+            {budget ? (
+              <span className={cx("ml-2 text-xs font-medium", total > budget ? "text-amber-ink" : total < budget ? "text-brand" : "text-muted")}>
+                {total > budget ? `${num(total - budget)} over budget` : total < budget ? `${num(budget - total)} under budget` : "matches the budget"}
+              </span>
+            ) : null}
+          </span>
+        </div>
+        {rows.length > 1 && (
+          <SplitBar
+            className="mt-3 border-t border-line pt-3"
+            showAmounts
+            parts={rows.map((r, i) => ({
+              key: isStellarAddress(r.receiver) ? r.receiver : `row-${i}`,
+              label: r.memberName.trim(),
+              amount: Number(r.amount) || 0,
+            }))}
+          />
+        )}
+        {(budget || total > 0) && rows.length > 1 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => onChange(splitEvenly(rows, budget || total))}
+              className="rounded-lg border border-line px-2.5 py-1 text-xs font-semibold text-muted hover:border-brand/40 hover:text-brand"
+            >
+              Split {num(budget || total)} USDC evenly
+            </button>
+          </div>
+        )}
+        {budget && rows.length === 1 && Number(rows[0].amount) !== budget ? (
+          <button
+            type="button"
+            onClick={() => onChange([{ ...rows[0], amount: String(budget) }])}
+            className="mt-3 rounded-lg border border-line px-2.5 py-1 text-xs font-semibold text-muted hover:border-brand/40 hover:text-brand"
+          >
+            Quote the full budget ({num(budget)} USDC)
+          </button>
+        ) : null}
       </div>
     </div>
   );

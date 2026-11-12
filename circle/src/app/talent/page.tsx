@@ -48,8 +48,11 @@ async function Results({ searchParams }: { searchParams: SP }) {
               <Card className="h-full p-5 hover:border-brand/40">
                 <div className="flex items-center gap-3">
                   <Avatar address={u.address} name={u.name} size={44} />
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold">{u.name}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-2 font-semibold">
+                      <span className="truncate">{u.name}</span>
+                      {u.demo && <span className="shrink-0 rounded-full border border-dashed border-line px-1.5 text-[10px] font-medium text-muted">Sample</span>}
+                    </p>
                     <p className="truncate text-xs text-muted">{u.headline || u.category}</p>
                   </div>
                 </div>

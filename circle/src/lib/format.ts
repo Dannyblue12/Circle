@@ -41,3 +41,27 @@ export function splitSkills(skills: string): string[] {
 export function isStellarAddress(v: string) {
   return /^G[A-Z2-7]{55}$/.test(v.trim());
 }
+
+const HOUR_MS = 3600_000;
+const DAY_MS = 24 * HOUR_MS;
+
+/** Posted in the last two days. */
+export function isNew(createdAt: Date | number | null | undefined) {
+  if (!createdAt) return false;
+  return Date.now() - new Date(createdAt).getTime() < 2 * DAY_MS;
+}
+
+/** How urgent a deadline is, for a small label on gig cards and pages. */
+export function dueLabel(deadline: Date | number | null | undefined): { text: string; tone: "red" | "amber" | "gray" } | null {
+  if (!deadline) return null;
+  const ms = new Date(deadline).getTime() - Date.now();
+  if (ms <= 0) return { text: "Deadline passed", tone: "gray" };
+  if (ms < DAY_MS) return { text: `${Math.max(1, Math.round(ms / HOUR_MS))}h left`, tone: "red" };
+  const days = Math.ceil(ms / DAY_MS);
+  if (days <= 5) return { text: `${days} days left`, tone: "amber" };
+  return { text: `Due ${shortDate(deadline)}`, tone: "gray" };
+}
+
+export function shortDate(d: Date | number, withYear = false) {
+  return new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", ...(withYear ? { year: "numeric" } : {}) });
+}
