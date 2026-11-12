@@ -1,0 +1,45 @@
+{
+  "name": "circle",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "setup": "tsx scripts/setup.ts",
+    "predev": "tsx scripts/setup.ts",
+    "dev": "next dev",
+    "prebuild": "tsx scripts/setup.ts",
+    "build": "next build",
+    "prestart": "tsx scripts/setup.ts",
+    "start": "next start",
+    "lint": "eslint",
+    "seed": "tsx scripts/setup.ts && tsx scripts/seed.ts",
+    "setup:platform": "tsx scripts/setup-platform.ts",
+    "db:generate": "drizzle-kit generate",
+    "test": "tsx --conditions=react-server scripts/tests/auth.test.ts && tsx --conditions=react-server scripts/tests/payment.test.ts && tsx --conditions=react-server scripts/tests/intent.test.ts",
+    "test:api": "tsx scripts/tests/e2e-api.test.ts"
+  },
+  "dependencies": {
+    "@creit.tech/stellar-wallets-kit": "^2.8.0",
+    "@libsql/client": "^0.18.0",
+    "@stellar/stellar-sdk": "^17.4.0",
+    "dotenv": "^18.0.10",
+    "drizzle-orm": "^0.45.4",
+    "geist": "^1.9.2",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #0c794f;
+  --color-brand-dark: #09603e;
+  --color-brand-soft: #e7f3ec;
+  --color-canvas: #f4f6f5;
+  --color-ink: #111714;
+  --color-muted: #5f6b65;
+  --color-line: #e3e8e5;
+  --color-amber-soft: #fdf3dc;
+  --color-amber-ink: #8a5a00;
+  --color-blue-soft: #e8edfc;
+  --color-blue-ink: #2f49a8;
+  --color-red-soft: #fdebea;
+  --color-red-ink: #a12a22;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-brand-soft);
+}
+
+/* Inputs share one look across forms. In the base layer so utilities
+   on an element (text-xs, pr-14, py-4…) can still override them. */
+@layer base {
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-[15px] outline-none transition placeholder:text-muted/70 focus:border-brand focus:ring-2 focus:ring-brand/15;
+  }
+  textarea.input {
+    @apply min-h-28 leading-relaxed;
+  }
+  .label {
+    @apply mb-1.5 block text-[13px] font-semibold text-ink;
+  }
+  .hint {
+    @apply mt-1 text-xs text-muted;
+  }
+}

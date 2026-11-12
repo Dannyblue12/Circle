@@ -1,0 +1,12 @@
+import { Keypair, TransactionBuilder } from "@stellar/stellar-sdk";
+import { buildChallenge, verifyChallenge } from "../../src/lib/auth-challenge";
+import { txHash } from "../../src/lib/stellar-server";
+const pass = "Test SDF Network ; September 2015";
+const kp = Keypair.random(); const other = Keypair.random();
+const { xdr, nonce } = buildChallenge(kp.publicKey());
+const signed = (k: Keypair) => { const t = TransactionBuilder.fromXDR(xdr, pass); t.sign(k); return t.toXDR(); };
+console.log("good:", verifyChallenge(signed(kp), kp.publicKey(), nonce));
+console.log("wrong signer:", verifyChallenge(signed(other), kp.publicKey(), nonce));
+console.log("wrong nonce:", verifyChallenge(signed(kp), kp.publicKey(), "x".repeat(32)));
+console.log("unsigned:", verifyChallenge(xdr, kp.publicKey(), nonce));
+console.log("hash stable across signing:", txHash(xdr) === txHash(signed(kp)));
