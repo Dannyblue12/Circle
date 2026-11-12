@@ -43,8 +43,27 @@ async function main() {
   }
   const client = createClient({ url, authToken: process.env.DATABASE_AUTH_TOKEN || undefined });
   await migrate(drizzle(client), { migrationsFolder: join(root, "drizzle") });
-  client.close();
   console.log(`• Database ready (${url.startsWith("file:") ? url.replace("file:", "") : url.split("@").pop()})`);
+
+  // Demo gigs, so a fresh install or deploy doesn't open on an empty marketplace.
+  if (process.env.DEMO_DATA !== "false") {
+    const schema = await import("../src/lib/db/schema");
+    const demo = await import("./demo");
+    const db = drizzle(client, { schema });
+    try {
+      if (!(await demo.hasGigs(db))) {
+        const s = await demo.seedDemo(db);
+        console.log(`• Added ${s.gigs} demo gigs and ${s.people} sample profiles (remove with: npm run seed -- --remove, or set DEMO_DATA="false")`);
+      } else {
+        const days = await demo.refreshDemoDates(db);
+        if (days) console.log(`• Moved demo gig dates forward ${days} day${days === 1 ? "" : "s"} so they look current`);
+      }
+    } catch (e) {
+      // Demo data is a nicety: never block the app from starting because of it.
+      console.warn("⚠ Couldn't add demo gigs:", e instanceof Error ? e.message : e);
+    }
+  }
+  client.close();
 
   // 3. What's still missing
   const missing = [

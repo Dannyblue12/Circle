@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { GigCard } from "@/components/gig-card";
+import { SplitDemo } from "@/components/split-demo";
 import { Card, Empty, LinkButton, Skeleton } from "@/components/ui";
 import { CATEGORIES } from "@/lib/categories";
-import { listGigs, stats } from "@/lib/data";
+import { categoryCounts, listGigs, stats } from "@/lib/data";
 import { num } from "@/lib/format";
+import { serverConfig } from "@/lib/server-config";
 
 const VALUES = [
   { title: "Money locked before work starts", text: "The client's USDC sits in an escrow contract on Stellar that anyone can check. No more ghosting after delivery." },
@@ -57,13 +59,9 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-        <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((c) => (
-            <Link key={c} href={`/gigs?category=${encodeURIComponent(c)}`} className="rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-medium hover:border-brand/40 hover:text-brand">
-              {c}
-            </Link>
-          ))}
-        </div>
+        <Suspense fallback={<CategoryChips />}>
+          <CategoryChipsWithCounts />
+        </Suspense>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
@@ -89,6 +87,26 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_440px] lg:gap-14">
+        <div>
+          <p className="mb-3 inline-flex rounded-full bg-blue-soft px-3 py-1 text-xs font-semibold text-blue-ink">Try it</p>
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Split a gig. Everyone gets paid directly.</h2>
+          <p className="mt-3 max-w-md leading-relaxed text-muted">
+            Applying as a team? Set each person&apos;s share in your application. When the client hires you, those shares become escrow milestones, and each one is paid
+            straight to that member&apos;s own wallet. The team lead never has to hold or forward anyone&apos;s money.
+          </p>
+          <ul className="mt-5 space-y-2 text-sm">
+            {["Drag the sliders to change the split", "Shares always add up to the full budget", "What you see is what lands in each wallet, after fees"].map((t) => (
+              <li key={t} className="flex items-center gap-2">
+                <span className="grid size-5 place-items-center rounded-full bg-brand-soft text-brand"><CheckIcon /></span>
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <SplitDemo platformFeePct={serverConfig.platformFeePercent} />
+      </section>
+
       <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
         <Card className="grid gap-6 bg-brand p-7 text-white sm:grid-cols-[1fr_auto] sm:items-center sm:p-9">
           <div>
@@ -105,6 +123,27 @@ export default function Home() {
       </section>
     </>
   );
+}
+
+function CategoryChips({ counts }: { counts?: Record<string, number> }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {CATEGORIES.map((c) => (
+        <Link
+          key={c}
+          href={`/gigs?category=${encodeURIComponent(c)}`}
+          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-medium transition hover:-translate-y-px hover:border-brand/40 hover:text-brand"
+        >
+          {c}
+          {counts && counts[c] ? <span className="rounded-full bg-brand-soft px-1.5 text-[11px] font-semibold text-brand">{counts[c]}</span> : null}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+async function CategoryChipsWithCounts() {
+  return <CategoryChips counts={await categoryCounts()} />;
 }
 
 async function Stats() {

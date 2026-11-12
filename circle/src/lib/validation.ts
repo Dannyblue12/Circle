@@ -28,7 +28,9 @@ export const gigSchema = z.object({
     .string()
     .optional()
     .transform((v) => (v ? new Date(v) : null))
-    .refine((d) => !d || !isNaN(d.getTime()), "Invalid deadline"),
+    .refine((d) => !d || !isNaN(d.getTime()), "Invalid deadline")
+    // A date-only deadline means "by the end of that day", so today is still fine.
+    .refine((d) => !d || d.getTime() > Date.now() - 86400000, "Pick a deadline that hasn't passed"),
 });
 
 export const applicationSchema = z.object({

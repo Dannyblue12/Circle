@@ -1,9 +1,20 @@
 import "server-only";
+import { randomUUID } from "crypto";
 import { connection } from "next/server";
 import { and, desc, eq, inArray, like, or, sql } from "drizzle-orm";
 import { applications, db, gigs, milestones, payLinks, projects, users, type User } from "./db";
 
 // Every read calls connection() first so Next renders it per request, never at build time.
+
+// Table-qualified on purpose: in a single-table select Drizzle prints bare column names,
+// and a bare "id" inside the subquery would mean applications.id, not gigs.id.
+const applicantCount = sql<number>`(select count(*) from ${applications} where ${applications}.gig_id = ${gigs}.id)`;
+
+/** A fresh id per server render. Used as a React key to reset client state on a real navigation. */
+export async function requestId() {
+  await connection();
+  return randomUUID();
+}
 
 export async function getUsers(addresses: string[]): Promise<Record<string, User>> {
   const unique = [...new Set(addresses.filter(Boolean))];
@@ -29,7 +40,7 @@ export async function listGigs(opts: { q?: string; category?: string; status?: "
   const rows = await db
     .select({
       gig: gigs,
-      applicants: sql<number>`(select count(*) from ${applications} where ${applications.gigId} = ${gigs.id})`,
+      applicants: applicantCount,
     })
     .from(gigs)
     .where(where.length ? and(...where) : undefined)
@@ -50,6 +61,13 @@ export async function getGig(id: string) {
     client: people[gig.clientAddress] ?? null,
     applications: apps.map((a) => ({ ...a, lead: people[a.leadAddress] ?? null })),
   };
+}
+
+/** Other open gigs in the same category (then any category), for "More gigs like this". */
+export async function similarGigs(gig: { id: string; category: string }, limit = 3) {
+  const open = await listGigs({ limit: 60 });
+  const others = open.filter((g) => g.id !== gig.id);
+  return [...others.filter((g) => g.category === gig.category), ...others.filter((g) => g.category !== gig.category)].slice(0, limit);
 }
 
 export async function earningsFor(address: string) {
@@ -112,7 +130,7 @@ export async function getDashboard(address: string) {
     db
       .select({
         gig: gigs,
-        applicants: sql<number>`(select count(*) from ${applications} where ${applications.gigId} = ${gigs.id})`,
+        applicants: applicantCount,
       })
       .from(gigs)
       .where(eq(gigs.clientAddress, address))
@@ -159,6 +177,17 @@ export async function listDisputes() {
     .where(inArray(milestones.status, ["DISPUTED", "RESOLVED"]))
     .orderBy(desc(milestones.updatedAt));
   return rows;
+}
+
+/** Open gigs per category, for the category chips on the home page. */
+export async function categoryCounts(): Promise<Record<string, number>> {
+  await connection();
+  const rows = await db
+    .select({ category: gigs.category, n: sql<number>`count(*)` })
+    .from(gigs)
+    .where(eq(gigs.status, "OPEN"))
+    .groupBy(gigs.category);
+  return Object.fromEntries(rows.map((r) => [r.category, Number(r.n)]));
 }
 
 export async function stats() {

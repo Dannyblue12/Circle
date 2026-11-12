@@ -12,7 +12,8 @@ Built for Boundless Build Day (Stellar testnet).
 
 | Area | What it does |
 |---|---|
-| **Marketplace** | Browse and search gigs by category, post a gig, apply solo or as a team, hire one application. Talent directory and public profiles with earnings verified on-chain. |
+| **Marketplace** | Instant search, category counts, budget filters and sorting; save gigs for later; share a gig in one tap. Post a gig from a template with a live preview, apply solo or as a team with a visual split, hire one application. Talent directory and public profiles with earnings verified on-chain. |
+| **Demo gigs** | 27 sample gigs across every category, with sample profiles and applications (solo and team), added automatically on an empty database. They're tagged "Sample" in the app and can be removed in one command. |
 | **Escrow + team split** | Hiring turns the winning application into a multi-release escrow: one milestone per person, each with its own wallet. Client funds, lead marks done with proof, client approves, the Platform account releases that share automatically. |
 | **Direct projects** | For clients found on WhatsApp/X: the lead creates a project with a client wallet and sends a `/p/…` link. |
 | **Disputes** | Client or lead can dispute a milestone; its money freezes. An admin splits it (e.g. 70/30) and the contract pays both in one transaction. |
@@ -43,11 +44,25 @@ You need Node 20+.
 
 ```bash
 npm install
-npm run seed       # optional: sample profiles, gigs and applications
 npm run dev        # http://localhost:3000
 ```
 
-The first `npm run dev` sets itself up: it creates `.env` from `.env.example` (with a random `SESSION_SECRET`) and creates the database tables in `dev.db`. This runs again before every `dev`, `build` and `start`, and it's safe to repeat. You can also run it on its own with `npm run setup`.
+The first `npm run dev` sets itself up: it creates `.env` from `.env.example` (with a random `SESSION_SECRET`), creates the database tables in `dev.db`, and adds the demo gigs if the database has no gigs yet. This runs again before every `dev`, `build` and `start`, and it's safe to repeat. You can also run it on its own with `npm run setup`.
+
+### Demo gigs
+
+The demo data is 27 open gigs (every category, budgets from 15 to 300 USDC, some closing soon), 27 sample profiles, and 25 applications, some of them team splits. It's added automatically when the database has no gigs, including on a fresh Vercel + Turso deploy.
+
+- Sample people get fresh random testnet addresses that nobody holds, so nobody can sign in as them, and no payments or projects are faked. You can practise applying to a sample gig, but its client will never hire.
+- Every demo row is flagged in the database and tagged **Sample** in the app.
+- Their dates are moved forward on each start, so an old demo never looks abandoned. Your own gigs are never touched.
+
+```bash
+npm run seed -- --reset    # fresh set of demo data
+npm run seed -- --remove   # delete it (your real gigs and profiles stay), and stop re-adding it
+```
+
+To start with an empty marketplace, set `DEMO_DATA="false"` before the first start (on Vercel, as an environment variable).
 
 The marketplace (profiles, gigs, applications, hiring, pay link pages) works straight away. For the on-chain parts, fill in `.env` and restart:
 
@@ -120,6 +135,7 @@ src/
 drizzle/                     SQL migrations, applied automatically by scripts/setup.ts
 scripts/
   setup.ts                   Creates .env and the database tables (runs before dev/build/start)
+  demo.ts                    Demo gigs, profiles and applications (add, remove, keep dates current)
   seed.ts, setup-platform.ts
   tests/                     Offline unit tests and an API end-to-end test
 ```

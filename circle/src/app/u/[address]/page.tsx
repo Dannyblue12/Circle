@@ -50,6 +50,11 @@ async function Profile({ params }: { params: Params }) {
           <div className="mt-3 flex flex-wrap gap-2">
             {user?.category && <Badge>{user.category}</Badge>}
             {user?.location && <Badge tone="gray">{user.location}</Badge>}
+            {user?.demo && (
+              <span title="Sample account added to show how Circle works" className="rounded-full border border-dashed border-line px-2.5 py-0.5 text-xs font-medium text-muted">
+                Sample profile
+              </span>
+            )}
           </div>
           <a href={explorer.account(address)} target="_blank" rel="noreferrer" className="mt-4 block break-all font-mono text-xs text-muted hover:text-brand">
             {address}

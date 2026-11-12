@@ -11,6 +11,8 @@ export const users = sqliteTable("users", {
   skills: text("skills").notNull().default(""), // comma separated
   location: text("location").notNull().default(""),
   link: text("link").notNull().default(""),
+  /** Sample account created by the demo seed (random keypair nobody holds). */
+  demo: integer("demo", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(now),
 });
 
@@ -27,6 +29,8 @@ export const gigs = sqliteTable(
     deadline: integer("deadline", { mode: "timestamp" }),
     status: text("status", { enum: ["OPEN", "HIRED", "CLOSED"] }).notNull().default("OPEN"),
     projectId: text("project_id"),
+    /** Sample gig from the demo seed: shown with a "Sample" tag, its client can't hire. */
+    demo: integer("demo", { mode: "boolean" }).notNull().default(false),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(now),
   },
   (t) => [index("gigs_status_cat").on(t.status, t.category), index("gigs_client").on(t.clientAddress)],
