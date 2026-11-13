@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { WalletProvider } from "@/components/wallet";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { ToastProvider } from "@/components/toast";
 
 export const metadata: Metadata = {
@@ -20,9 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastProvider>
             <SiteHeader />
             <main className="flex-1">{children}</main>
-            <footer className="border-t border-line py-6 text-center text-xs text-muted">
-              Circle · Stellar testnet demo · Escrow by Trustless Work · Your keys never leave your wallet
-            </footer>
+            <SiteFooter />
           </ToastProvider>
         </WalletProvider>
       </body>

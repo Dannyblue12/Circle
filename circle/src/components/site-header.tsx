@@ -12,6 +12,7 @@ const NAV = [
   { href: "/gigs", label: "Find gigs" },
   { href: "/talent", label: "Talent" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/pitch", label: "Pitch" },
 ];
 
 export function Logo() {

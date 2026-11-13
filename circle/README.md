@@ -13,6 +13,7 @@ Built for Boundless Build Day (Stellar testnet).
 | Area | What it does |
 |---|---|
 | **Marketplace** | Instant search, category counts, budget filters and sorting; save gigs for later; share a gig in one tap. Post a gig from a template with a live preview, apply solo or as a team with a visual split, hire one application. Talent directory and public profiles with earnings verified on-chain. |
+| **Landing site + pitch** | The home page tells the story (problem, how it works, a live split calculator, why Stellar, the team) and carries the pitch deck as a carousel: swipe, arrow keys, autoplay, full screen, and downloads (PDF or one slide as PNG). `/pitch` is a page to send to judges. |
 | **Demo gigs** | 27 sample gigs across every category, with sample profiles and applications (solo and team), added automatically on an empty database. They're tagged "Sample" in the app and can be removed in one command. |
 | **Escrow + team split** | Hiring turns the winning application into a multi-release escrow: one milestone per person, each with its own wallet. Client funds, lead marks done with proof, client approves, the Platform account releases that share automatically. |
 | **Direct projects** | For clients found on WhatsApp/X: the lead creates a project with a client wallet and sends a `/p/…` link. |
@@ -148,6 +149,16 @@ API routes: `auth/{challenge,verify,logout}`, `me`, `profile`, `gigs`, `gigs/[id
 - **Release only on-chain truth.** Before the Platform account releases a share, the server reads the escrow from Trustless Work (`validateOnChain`) and requires that milestone to be approved, not released and not disputed. The database is never trusted for money movement.
 - **Receipts.** Quick pay links are marked paid only after the transaction is confirmed on Stellar and passes every check; each hash can be used once.
 - **What lives where.** On Stellar: the escrow, the USDC, the roles, every payment. In the database: titles, names, profiles, link ids, statuses. No emails or phone numbers are collected.
+
+## Pitch deck
+
+The slides live in `scripts/pitch/slides.html` (plain HTML, one 1920×1080 `<section>` per slide). After editing it, re-render the images and PDF in `public/pitch/` with:
+
+```bash
+node scripts/pitch/render.cjs   # needs Playwright with Chromium
+```
+
+Slide titles and summaries for the carousel are in `src/lib/pitch.ts`.
 
 ## Tests
 

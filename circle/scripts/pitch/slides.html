@@ -1,0 +1,212 @@
+<!doctype html>
+<!--
+  Source for the Circle pitch deck shown on the website (/pitch and the home page).
+  Render to public/pitch/ with:  node scripts/pitch/render.cjs
+  Each <section class="slide"> is one 1920×1080 slide.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Circle · Stellar’s Global Talent Hub</title>
+<style>
+  @font-face { font-family: "Geist"; src: url(../../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2) format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: "Geist Mono"; src: url(../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2) format("woff2"); font-weight: 100 900; }
+  @page { size: 1920px 1080px; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #0b1f17; }
+  body { font-family: "Geist", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .slide { width: 1920px; height: 1080px; position: relative; overflow: hidden; padding: 128px 128px 160px; display: flex; flex-direction: column; justify-content: space-between; gap: 44px; page-break-after: always; break-after: page; }
+  .light { background: #f4f6f5; color: #111714; }
+  .dark { background: #0b1f17; color: #f4f6f5; }
+  .eyebrow { font-family: "Geist Mono", monospace; font-size: 24px; letter-spacing: 2px; color: #0c794f; }
+  .dark .eyebrow { color: #3ddc97; }
+  h1 { font-size: 112px; font-weight: 800; line-height: 1.02; letter-spacing: -3px; }
+  h2 { font-size: 72px; font-weight: 800; line-height: 1.08; letter-spacing: -2px; }
+  h3 { font-size: 32px; font-weight: 700; line-height: 1.15; }
+  .muted { color: #4f5b55; }
+  .dark .muted { color: #bfd8cd; }
+  .row { display: flex; gap: 32px; }
+  .card { flex: 1; background: #fff; border: 1px solid #e3e8e5; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 14px; }
+  .card p { font-size: 24px; line-height: 1.45; }
+  .ico { width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; }
+  .ico svg { width: 36px; height: 36px; }
+  .footer { position: absolute; left: 128px; bottom: 64px; font-size: 24px; color: #5f6b65; }
+  .dark .footer { color: #8fb3a3; }
+  svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-size: 24px; font-weight: 700; width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: #0c794f; color: #fff; }
+  .dot { position: absolute; width: 88px; height: 88px; border-radius: 50%; border: 6px solid #0b1f17; display: grid; place-items: center; font-size: 32px; font-weight: 700; color: #0b1f17; }
+  table { width: 100%; border-collapse: collapse; font-size: 26px; }
+  th, td { text-align: left; padding: 22px 26px; vertical-align: top; line-height: 1.35; }
+  th { background: #0c794f; color: #f4f6f5; font-weight: 600; }
+  th:first-child { border-radius: 16px 0 0 0; } th:last-child { border-radius: 0 16px 0 0; }
+  tr:nth-child(even) td { background: #10392a; }
+  td { color: #d7ebe0; } td:first-child { color: #f4f6f5; font-weight: 600; } td:last-child { color: #9fb8ad; }
+  .avatar { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; font-size: 32px; font-weight: 700; color: #0b1f17; }
+  .why { flex: 1; display: flex; gap: 16px; align-items: flex-start; }
+  .why svg { width: 40px; height: 40px; color: #0c794f; flex-shrink: 0; }
+  .why p { font-size: 24px; line-height: 1.4; }
+  .check { display: flex; gap: 16px; align-items: flex-start; }
+  .check svg { width: 36px; height: 36px; flex-shrink: 0; }
+  .check p { font-size: 26px; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Cover -->
+<section class="slide dark" style="background: radial-gradient(circle at 80% 45%, #13583c 0%, #0b1f17 62%); justify-content: center; gap: 40px;">
+  <div style="position:absolute; left:1300px; top:260px; width:480px; height:480px; border:14px solid #0c794f; border-radius:50%;"></div>
+  <div class="dot" style="left:1496px; top:216px; background:#3ddc97;">D</div>
+  <div class="dot" style="left:1736px; top:456px; background:#7aa7ff;">U</div>
+  <div class="dot" style="left:1496px; top:696px; background:#f2b53a;">B</div>
+  <div class="dot" style="left:1256px; top:456px; background:#e7f3ec;">F</div>
+  <p style="position:absolute; left:1390px; top:448px; width:300px; text-align:center; font-size:44px; font-weight:800; color:#3ddc97; letter-spacing:2px;">USDC</p>
+  <p style="position:absolute; left:1390px; top:508px; width:300px; text-align:center; font-size:24px; color:#bfd8cd;">locked in escrow</p>
+  <div style="width:1080px; display:flex; flex-direction:column; gap:40px;">
+    <div style="display:flex; align-items:center; gap:20px;">
+      <div style="width:72px; height:72px; background:#0c794f; border-radius:18px; display:grid; place-items:center;"><div style="width:36px; height:36px; border:7px solid #f4f6f5; border-radius:50%;"></div></div>
+      <p style="font-size:44px; font-weight:700; letter-spacing:-1px;">Circle</p>
+    </div>
+    <p class="eyebrow" style="background:#10392a; padding:10px 20px; border-radius:999px; align-self:flex-start;">STELLAR’S GLOBAL TALENT HUB · LIVE ON TESTNET</p>
+    <h1>Get paid safely,<br><span style="color:#3ddc97;">even as a team.</span></h1>
+    <p class="muted" style="font-size:32px; line-height:1.45; width:960px;">Gigs, escrow and team payouts in USDC on Stellar. The client locks the money before work starts, and every team member is paid straight to their own wallet.</p>
+  </div>
+  <p class="footer">Boundless Build Day · Escrow by Trustless Work on Soroban · Built in Uyo, Nigeria, for the world</p>
+</section>
+
+<!-- 2 · Problem -->
+<section class="slide light">
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    <p class="eyebrow">THE PROBLEM</p>
+    <h2>Freelancers deliver the work.<br>Then the risk starts.</h2>
+  </div>
+  <div class="row">
+    <div class="card">
+      <div class="ico" style="background:#fdebea; color:#a12a22;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <h3 style="font-size:44px; line-height:1.1;">Ghosted after delivery</h3>
+      <p class="muted">The work is sent, the client goes quiet, and there is nothing to fall back on.</p>
+    </div>
+    <div class="card">
+      <div class="ico" style="background:#fdf3dc; color:#8a5a00;"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14c3 0 5 1.6 5 4.5"/></svg></div>
+      <h3 style="font-size:44px; line-height:1.1;">One wallet holds the team’s pay</h3>
+      <p class="muted">Teams get paid through one lead, who then has to forward everyone’s share by hand.</p>
+    </div>
+    <div class="card">
+      <div class="ico" style="background:#e8edfc; color:#2f49a8;"><svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></div>
+      <h3 style="font-size:44px; line-height:1.1;">Fake payment alerts</h3>
+      <p class="muted">Screenshots and forged alerts “prove” a payment that never arrived.</p>
+    </div>
+  </div>
+  <p style="font-size:44px; font-weight:700; line-height:1.2; letter-spacing:-1px;">Talent is everywhere. <span style="color:#0c794f;">Safe, fair payment is not.</span></p>
+  <p class="footer">Circle · 02</p>
+</section>
+
+<!-- 3 · Solution -->
+<section class="slide light">
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    <p class="eyebrow">THE SOLUTION</p>
+    <h2>Lock the money first. Pay every<br>member straight to their wallet.</h2>
+  </div>
+  <div style="display:flex; align-items:stretch; gap:16px;">
+    <div class="card" style="padding:32px;"><div class="num">1</div><h3>Post or find a gig</h3><p class="muted">Apply solo, or as a team with a split.</p></div>
+    <svg viewBox="0 0 48 24" style="width:48px; align-self:center; color:#0c794f; stroke-width:3;"><path d="M2 12h42M34 4l10 8-10 8"/></svg>
+    <div class="card" style="padding:32px;"><div class="num">2</div><h3>Hire and lock USDC</h3><p class="muted">Escrow on Stellar, before any work starts.</p></div>
+    <svg viewBox="0 0 48 24" style="width:48px; align-self:center; color:#0c794f; stroke-width:3;"><path d="M2 12h42M34 4l10 8-10 8"/></svg>
+    <div class="card" style="padding:32px;"><div class="num">3</div><h3>Deliver with proof</h3><p class="muted">Mark each milestone done with a link.</p></div>
+    <svg viewBox="0 0 48 24" style="width:48px; align-self:center; color:#0c794f; stroke-width:3;"><path d="M2 12h42M34 4l10 8-10 8"/></svg>
+    <div class="card" style="padding:32px; background:#0c794f; border-color:#0c794f;"><div class="num" style="background:#f4f6f5; color:#0c794f;">4</div><h3 style="color:#f4f6f5;">Approve and pay</h3><p style="color:#d7ebe0;">Each share released to its own wallet.</p></div>
+  </div>
+  <div class="card" style="flex:none; padding:32px 40px; gap:16px;">
+    <p class="muted"><b style="color:#111714;">Example:</b> a 30 USDC brand kit, split three ways, one milestone per person</p>
+    <div style="display:flex; gap:6px; height:64px; font-size:24px; font-weight:600;">
+      <div style="flex:15; background:#0c794f; color:#f4f6f5; border-radius:14px 0 0 14px; display:flex; align-items:center; padding:0 24px;">Ada · logo · 15 USDC</div>
+      <div style="flex:10; background:#2f49a8; color:#f4f6f5; display:flex; align-items:center; padding:0 24px;">Tunde · art · 10</div>
+      <div style="flex:5; background:#f2b53a; color:#111714; border-radius:0 14px 14px 0; display:flex; align-items:center; padding:0 20px;">Ifeoma · 5</div>
+    </div>
+  </div>
+  <p class="footer">Circle · 03 · Multi-release escrow by Trustless Work on Soroban</p>
+</section>
+
+<!-- 4 · Proof -->
+<section class="slide light">
+  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:32px;">
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <p class="eyebrow">THE PROOF</p>
+      <h2>Built and running on Stellar today</h2>
+    </div>
+    <p style="font-size:24px; font-weight:600; color:#0c794f; background:#e7f3ec; padding:12px 24px; border-radius:999px; white-space:nowrap;">● Live demo on testnet</p>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+    <div class="card" style="padding:32px; gap:12px;"><svg viewBox="0 0 24 24" style="width:44px; height:44px; color:#0c794f;"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><h3>Multi-release escrow</h3><p class="muted">One milestone per person, locked before work starts.</p></div>
+    <div class="card" style="padding:32px; gap:12px;"><svg viewBox="0 0 24 24" style="width:44px; height:44px; color:#0c794f;"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14c3 0 5 1.6 5 4.5"/></svg><h3>Team splits</h3><p class="muted">Up to 10 members, each paid to their own wallet.</p></div>
+    <div class="card" style="padding:32px; gap:12px;"><svg viewBox="0 0 24 24" style="width:44px; height:44px; color:#0c794f;"><path d="M12 3l2.6 2 3.3-.2.9 3.2 2.7 1.9-1.2 3.1 1.2 3.1-2.7 1.9-.9 3.2-3.3-.2L12 23l-2.6-2-3.3.2-.9-3.2L2.5 16.1l1.2-3.1L2.5 9.9l2.7-1.9.9-3.2 3.3.2L12 3Z" transform="scale(.92) translate(1 -1)"/><path d="m8.5 12.5 2.5 2.5 5-5"/></svg><h3>On-chain receipts</h3><p class="muted">Pay links count only after Stellar confirms asset, amount, wallet and memo.</p></div>
+    <div class="card" style="padding:32px; gap:12px;"><svg viewBox="0 0 24 24" style="width:44px; height:44px; color:#0c794f;"><path d="M12 3v18M5 7h14M5 7l-3 7a3.5 3.5 0 0 0 6 0L5 7Zm14 0-3 7a3.5 3.5 0 0 0 6 0l-3-7Z"/></svg><h3>Fair disputes</h3><p class="muted">A disputed share freezes; it can be split, e.g. 70/30, in one transaction.</p></div>
+    <div class="card" style="padding:32px; gap:12px;"><svg viewBox="0 0 24 24" style="width:44px; height:44px; color:#0c794f;"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/></svg><h3>Wallet sign-in</h3><p class="muted">SEP-10-style signature. Keys never leave the wallet.</p></div>
+    <div class="card" style="padding:32px; gap:12px; background:#0b1f17; border-color:#0b1f17;"><svg viewBox="0 0 24 24" style="width:44px; height:44px; color:#3ddc97;"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z"/></svg><h3 style="color:#f4f6f5;">Any skill, anywhere</h3><p style="color:#bfd8cd;">12 categories, from code and design to translation and tutoring.</p></div>
+  </div>
+  <p class="footer">Circle · 04 · Platform and Trustless Work keys stay on the server; users sign everything in their own wallet</p>
+</section>
+
+<!-- 5 · Why Stellar -->
+<section class="slide dark" style="gap:40px;">
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    <p class="eyebrow">WHY STELLAR</p>
+    <h2>Why we build on Stellar, not Solana</h2>
+  </div>
+  <table>
+    <tr><th style="width:20%;">What freelancers need</th><th style="width:42%;">Stellar + Circle</th><th style="width:38%;">Solana</th></tr>
+    <tr><td>Built for</td><td>Payments and cross-border remittances, first</td><td>Fast general-purpose apps, DeFi and trading</td></tr>
+    <tr><td>Fees</td><td>Fixed base fee of 0.00001 XLM: tiny and predictable</td><td>Low base fee, plus priority fees that rise when the network is busy</td></tr>
+    <tr><td>Cash out locally</td><td>Anchors and MoneyGram Access turn USDC into local cash</td><td>Mostly through exchanges and third-party ramps</td></tr>
+    <tr><td>Escrow</td><td>Trustless Work: ready-made multi-release escrow on Soroban</td><td>Build or integrate your own</td></tr>
+  </table>
+  <p style="font-size:32px; font-weight:600; line-height:1.35;">A freelancer needs a fee they can predict and a way to spend what they earn. <span style="color:#3ddc97;">That’s Stellar’s home turf.</span></p>
+  <p class="footer">Circle · 05 · Both networks are fast and support USDC; the difference is fit for real-world payouts</p>
+</section>
+
+<!-- 6 · Team -->
+<section class="slide light" style="gap:40px;">
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    <p class="eyebrow">THE TEAM · WHY US</p>
+    <h2>We are the community Circle is for</h2>
+  </div>
+  <div class="row" style="gap:24px;">
+    <div class="card" style="padding:32px; gap:12px;"><div class="avatar" style="background:#3ddc97;">D</div><h3 style="font-size:44px;">Daniel</h3><p style="font-weight:600; color:#0c794f;">Front-end Developer</p><p class="muted">GDGoC Campus Lead</p></div>
+    <div class="card" style="padding:32px; gap:12px;"><div class="avatar" style="background:#7aa7ff;">U</div><h3 style="font-size:44px;">Ubongabasi</h3><p style="font-weight:600; color:#0c794f;">Co-lead · Product Co-developer</p><p class="muted">Co-builds the product end to end</p></div>
+    <div class="card" style="padding:32px; gap:12px;"><div class="avatar" style="background:#f2b53a;">B</div><h3 style="font-size:44px;">Bassey</h3><p style="font-weight:600; color:#0c794f;">Product Manager</p><p class="muted">Works with GDGoC on her campus</p></div>
+    <div class="card" style="padding:32px; gap:12px;"><div class="avatar" style="background:#0c794f; color:#f4f6f5;">F</div><h3 style="font-size:44px;">Favour</h3><p style="font-weight:600; color:#0c794f;">Product QA &amp; Testing</p><p class="muted">Notion Campus Community Manager, UniUyo, 2+ years</p></div>
+  </div>
+  <div class="row" style="gap:24px;">
+    <div class="why"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14c3 0 5 1.6 5 4.5"/></svg><p class="muted"><b style="color:#111714;">Built-in distribution.</b> We already lead GDGoC and Notion campus communities: our first users are in our rooms.</p></div>
+    <div class="why"><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg><p class="muted"><b style="color:#111714;">We ship.</b> Marketplace, escrow, team splits, disputes and pay links are live on testnet.</p></div>
+    <div class="why"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z"/></svg><p class="muted"><b style="color:#111714;">Built where the need is.</b> Uyo, Nigeria: the freelancers we design for are our peers.</p></div>
+  </div>
+  <p class="footer">Circle · 06</p>
+</section>
+
+<!-- 7 · Ask -->
+<section class="slide dark" style="background: radial-gradient(circle at 85% 15%, #13965f 0%, #0c794f 45%, #09603e 100%); gap:40px;">
+  <div style="position:absolute; left:1440px; top:96px; width:360px; height:360px; border:12px solid #3ddc97; border-radius:50%; opacity:.35;"></div>
+  <div style="display:flex; flex-direction:column; gap:20px; position:relative;">
+    <p class="eyebrow" style="color:#d7ebe0;">THE ASK</p>
+    <h2 style="width:1300px;">Make Circle Stellar’s<br>global talent hub.</h2>
+  </div>
+  <div class="row" style="position:relative;">
+    <div class="card" style="background:#0b1f17; border-color:#0b1f17; padding:40px; gap:20px;">
+      <h3 style="color:#3ddc97;">What we’re asking for</h3>
+      <div class="check"><svg viewBox="0 0 24 24" style="color:#3ddc97;"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></svg><p style="color:#f4f6f5;">Ecosystem backing to reach mainnet after a security audit</p></div>
+      <div class="check"><svg viewBox="0 0 24 24" style="color:#3ddc97;"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></svg><p style="color:#f4f6f5;">Introductions to anchors for local cash-out, starting in Nigeria</p></div>
+      <div class="check"><svg viewBox="0 0 24 24" style="color:#3ddc97;"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></svg><p style="color:#f4f6f5;">A place in Stellar’s community programmes to onboard campus talent worldwide</p></div>
+    </div>
+    <div class="card" style="background:#f4f6f5; border-color:#f4f6f5; padding:40px; gap:20px;">
+      <h3 style="color:#0c794f;">What we’ll do next</h3>
+      <div class="check"><svg viewBox="0 0 24 24" style="color:#0c794f;"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg><p style="color:#111714;">Mainnet launch with audited escrow flows</p></div>
+      <div class="check"><svg viewBox="0 0 24 24" style="color:#0c794f;"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9L12 3Z"/></svg><p style="color:#111714;">Ratings after payout, notifications and bounties</p></div>
+      <div class="check"><svg viewBox="0 0 24 24" style="color:#0c794f;"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg><p style="color:#111714;">Onboard student freelancers through GDGoC and Notion campus communities</p></div>
+    </div>
+  </div>
+  <p style="font-size:44px; font-weight:700; line-height:1.2; letter-spacing:-1px; position:relative;">Talent is everywhere. With Circle on Stellar, <span style="color:#b8f5d6;">getting paid safely is too.</span></p>
+  <p class="footer" style="color:#d7ebe0;">Thank you · Circle · Daniel, Ubongabasi, Bassey, Favour</p>
+</section>
+
+</body>
+</html>
